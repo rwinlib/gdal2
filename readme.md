@@ -4,7 +4,7 @@
 **NOTE** For building `rgdal` from CRAN you need [rwinlib/rgdal](https://github.com/rwinlib/gdal) stack. 
 
 
-This is a completely new gdal windows stack which has many more features enabled than the old one](https://github.com/rwinlib/gdal). It enables: 
+This is a completely new gdal windows stack which has many more features enabled than [the old one](https://github.com/rwinlib/gdal). It enables: 
 
  - geos 3.5.0
  - proj 4.9.3
