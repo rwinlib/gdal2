@@ -1,5 +1,6 @@
 /* port/cpl_config.h.  Generated from cpl_config.h.in by configure.  */
 /* port/cpl_config.h.in.  Generated from configure.in by autoheader.  */
+/* $Id: cpl_config.h.in 36873 2016-12-15 01:53:11Z rouault $ */
 
 /* Define if you want to use pthreads based multiprocessing support */
 /* #undef CPL_MULTIPROC_PTHREAD */
@@ -17,7 +18,7 @@
 /* #undef HAVE_5ARGS_MREMAP */
 
 /* --prefix directory for GDAL install */
-#define GDAL_PREFIX "/usr/local"
+#define GDAL_PREFIX "/mingw64"
 
 /* Define to 1 if you have the <assert.h> header file. */
 #define HAVE_ASSERT_H 1
@@ -57,7 +58,7 @@
 #define HAVE_GETCWD 1
 
 /* Define if you have the iconv() function and it works. */
-/* #undef HAVE_ICONV */
+#define HAVE_ICONV 1
 
 /* Define as 0 or 1 according to the floating point format supported by the
    machine */
@@ -71,6 +72,9 @@
 
 /* Define to 1 if the system has the type `int8'. */
 /* #undef HAVE_INT8 */
+
+/* Define to 1 if the system has the type `__uint128_t'. */
+#define HAVE_UINT128_T 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -98,6 +102,9 @@
 
 /* Define to 1, if your compiler supports long long data type */
 #define HAVE_LONG_LONG 1
+
+/* Define to 1, if your compiler supports uintptr_t data type */
+#define HAVE_UINTPTR_T 1
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
@@ -147,6 +154,9 @@
 /* Define to 1 if you have the `posix_spawnp' function. */
 /* #undef HAVE_POSIX_SPAWNP */
 
+/* Define to 1 if you have the `posix_memalign' function. */
+/* #undef HAVE_POSIX_MEMALIGN */
+
 /* Define to 1 if you have the `vfork' function. */
 /* #undef HAVE_VFORK */
 
@@ -155,6 +165,9 @@
 
 /* Define to 1 if you have the statvfs' function. */
 /* #undef HAVE_STATVFS */
+
+/* Define to 1 if you have the `statvfs64' function. */
+/* #undef HAVE_STATVFS64 */
 
 /* Define to 1 if you have the `lstat' function. */
 /* #undef HAVE_LSTAT */
@@ -166,7 +179,10 @@
 #define ICONV_CONST 
 
 /* For .cpp files, define as const if the declaration of iconv() needs const. */
-/* #undef ICONV_CPP_CONST */
+#define ICONV_CPP_CONST 
+
+/* Define to 1 if libjvm.so should be dlopen'd */
+/* #undef JVM_LIB_DLOPEN */
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
@@ -198,6 +214,9 @@
 
 /* Define to 1 if GCC atomic builtins are available */
 #define HAVE_GCC_ATOMIC_BUILTINS 1
+
+/* Define to 1 if GCC bswap builtins are available */
+#define HAVE_GCC_BSWAP 1
 
 /* Define to name of 64bit fopen function */
 /* #undef VSI_FOPEN64 */

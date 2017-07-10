@@ -61,7 +61,7 @@ public:
 
 	Coordinate p0; /// Segment start
 
-	Coordinate p1; /// Segemnt end
+	Coordinate p1; /// Segment end
 
 	LineSegment();
 
@@ -356,7 +356,7 @@ public:
 	 * @return true if an intersection was found, false otherwise
 	 *
 	 */
-	bool lineIntersection(const LineSegment& line, Coordinate& coord) const;
+	bool lineIntersection(const LineSegment& line, Coordinate& ret) const;
 
 	/**
 	 * Creates a LineString with the same coordinates as this segment
