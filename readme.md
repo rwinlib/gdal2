@@ -1,18 +1,28 @@
-GDAL Windows stack, July 2017. See attached `PKGBUILD` for `mingw-w64-gdal`.
+# GDAL for R
 
-Also rebuilt `mingw-w64-geos` and `mingw-w64-proj` with msys2 + rtools. Just source `rtools32.sh` or `rtools64.sh` before running `makepkg-mingw`.
-
-Stack was built with versions below.
+GDAL Windows stack, July 2017. See attached [`PKGBUILD`](PKGBUILD) for `mingw-w64-gdal`. Contains:
 
  - GDAL 2.2.0
  - GEOS 3.6.1
  - PROJ 4.9.3
- - CURL 7.54.1 (--with-openssl)
- - POSTGRESQL 9.6.3
+ - CURL 7.54.1 (--with-winssl)
+ - POSTGRESQL 9.6.3 (--with-openssl)
 
-To link use this stack:
+We also had to rebuild C++ dependencies `mingw-w64-geos` and `mingw-w64-proj` using msys2 + rtools. Just source `rtools32.sh` or `rtools64.sh` before running `makepkg-mingw`.
+
+
+## How to use
+
+To link the stack use the following flags in your package `Makevars.win`
 
 ```
+PKG_CPPFLAGS =\
+  -I../windows/gdal2-2.2.0/include/gdal \
+  -I../windows/gdal2-2.2.0/include/geos \
+  -I../windows/gdal2-2.2.0/include/proj
+
+PKG_LIBS = \
+  -L../windows/gdal2-2.2.0/lib-4.9.3${R_ARCH} \
   -lgdal -lsqlite3 -lspatialite -lproj -lgeos_c -lgeos  \
   -ljson-c -lnetcdf -lpq -lintl -lwebp -lcurl -lssh2 -lssl -lcrypto \
   -lhdf5_hl -lhdf5 -lexpat -lfreexl -lcfitsio \
@@ -20,7 +30,12 @@ To link use this stack:
   -lodbc32 -lodbccp32 -liconv -lpsapi -lws2_32 -lcrypt32 -lwldap32 -lsecur32 -lgdi32
 ```
 
-Full config:
+
+## HTTPS backend
+
+To make curl to use openssl instead of winssl for HTTPS you need to rename `libcurl-openssl.a` to `libcurl.a` for both architectures. However this will require you to supply a CA bundle via envvars.
+
+## Full config
 
 ```
 GDAL is now configured for x86_64-w64-mingw32
