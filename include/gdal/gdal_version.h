@@ -1,4 +1,4 @@
-/* $Id: gdal_version.h 38167 2017-04-28 16:00:45Z rouault $ */
+/* $Id: gdal_version.h 40767 2017-11-20 10:39:34Z rouault $ */
 
 /* -------------------------------------------------------------------- */
 /*      GDAL Version Information.                                       */
@@ -7,7 +7,7 @@
 #ifndef GDAL_VERSION_MAJOR
 #  define GDAL_VERSION_MAJOR    2
 #  define GDAL_VERSION_MINOR    2
-#  define GDAL_VERSION_REV      0
+#  define GDAL_VERSION_REV      3
 #  define GDAL_VERSION_BUILD    0
 #endif
 
@@ -23,8 +23,8 @@
 #endif
 
 #ifndef GDAL_RELEASE_DATE
-#  define GDAL_RELEASE_DATE     20170428
+#  define GDAL_RELEASE_DATE     20171120
 #endif
 #ifndef GDAL_RELEASE_NAME
-#  define GDAL_RELEASE_NAME     "2.2.0"
+#  define GDAL_RELEASE_NAME     "2.2.3"
 #endif

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: gdal.h 37723 2017-03-16 17:07:53Z rouault $
+ * $Id: gdal.h 39834 2017-08-16 12:20:23Z rouault $
  *
  * Project:  GDAL Core
  * Purpose:  GDAL Core C/Public declarations.
@@ -483,6 +483,7 @@ int          CPL_DLL CPL_STDCALL GDALDumpOpenDatasets( FILE * );
 GDALDriverH CPL_DLL CPL_STDCALL GDALGetDriverByName( const char * );
 int CPL_DLL         CPL_STDCALL GDALGetDriverCount( void );
 GDALDriverH CPL_DLL CPL_STDCALL GDALGetDriver( int );
+GDALDriverH CPL_DLL CPL_STDCALL GDALCreateDriver( void );
 void        CPL_DLL CPL_STDCALL GDALDestroyDriver( GDALDriverH );
 int         CPL_DLL CPL_STDCALL GDALRegisterDriver( GDALDriverH );
 void        CPL_DLL CPL_STDCALL GDALDeregisterDriver( GDALDriverH );

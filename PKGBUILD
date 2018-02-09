@@ -7,7 +7,7 @@
 _realname=gdal
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.2.0
+pkgver=2.2.3
 pkgrel=2
 pkgdesc="A translator library for raster geospatial data formats (mingw-w64)"
 arch=('any')
@@ -18,6 +18,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-postgresql"
              "${MINGW_PACKAGE_PREFIX}-qhull")
 depends=("${MINGW_PACKAGE_PREFIX}-cfitsio"
+         "${MINGW_PACKAGE_PREFIX}-crypto++"
          "${MINGW_PACKAGE_PREFIX}-curl"
          "${MINGW_PACKAGE_PREFIX}-expat"
          "${MINGW_PACKAGE_PREFIX}-geos"
@@ -35,20 +36,22 @@ depends=("${MINGW_PACKAGE_PREFIX}-cfitsio"
          "${MINGW_PACKAGE_PREFIX}-libtiff"
          "${MINGW_PACKAGE_PREFIX}-libwebp"
          "${MINGW_PACKAGE_PREFIX}-libxml2"
+         "${MINGW_PACKAGE_PREFIX}-netcdf"
          "${MINGW_PACKAGE_PREFIX}-openjpeg2"
          "${MINGW_PACKAGE_PREFIX}-pcre"
          "${MINGW_PACKAGE_PREFIX}-poppler"
+         "${MINGW_PACKAGE_PREFIX}-postgresql"
          "${MINGW_PACKAGE_PREFIX}-proj"
          "${MINGW_PACKAGE_PREFIX}-sqlite3"
          "${MINGW_PACKAGE_PREFIX}-xerces-c"
          "${MINGW_PACKAGE_PREFIX}-xz")
-optdepends=("${MINGW_PACKAGE_PREFIX}-postgresql")
+#optdepends=("${MINGW_PACKAGE_PREFIX}-postgresql")
 options=('strip' 'staticlibs')
 
 source=(http://download.osgeo.org/${_realname}/${pkgver}/${_realname}-${pkgver}.tar.gz
         0001-external-qhull-static.patch
         0002-libproj4-dll-name.patch)
-sha256sums=('d06546a6e34b77566512a2559e9117402320dd9487de9aa95cb8a377815dc360'
+sha256sums=('52f01bda8968643633016769607e6082a8ba1c746fadc2c1abe12cf7dc8f61dd'
             '6952586cd4436003748e8d99f2e8e8a660ba59bdb3c0b294493695ef57f93077'
             '1b8e2ccad84537c6ee569b254b766a25cba11fae85b891d712a91eea3c7a0f46')
 
@@ -68,6 +71,11 @@ prepare() {
   patch -p1 -i ${srcdir}/0001-external-qhull-static.patch
   patch -p1 -i ${srcdir}/0002-libproj4-dll-name.patch
   
+  # bug: http://osgeo-org.1560.x6.nabble.com/gdal-dev-jpeg2000-jasper-error-compiling-gdal-2-1-from-git-release-branch-td5299100.html
+  sed -i -e 's@uchar@unsigned char@' frmts/jpeg2000/jpeg2000_vsil_io.cpp
+
+  sed -i 's/-lsz /-lszip -lxdr -lm/g' configure.ac
+  
   ./autogen.sh
 }
 
@@ -75,33 +83,43 @@ build() {
   cd "${srcdir}/build-${MINGW_CHOST}"
 
   CFLAGS+=" -fno-strict-aliasing"
+  #export HDF4_INCLUDE="/usr/local/include"
+  #export HDF_LIB_DIR="/usr/local/lib"
+  export HDF_LIB_NAME="-L/usr/local/lib -ldf -ljpeg lsz -lz "
+  export HDF5_LIB_NAME="-L/usr/local/lib -lhdf5 "
 
   ./configure \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST} \
-    --prefix=${MINGW_PREFIX} \
+    --prefix="/usr/local" \
     --enable-static \
     --disable-shared \
     --disable-debug \
     --without-poppler \
     --without-xerces \
     --with-webp \
-    --with-spatialite=/mingw32 \
+    --with-spatialite=/mingw64 \
     --with-liblzma=yes \
-    --with-expat-inc=/mingw32/include \
-    --with-expat-lib="-L/mingw32/lib -lexpat" \
+    --with-expat-inc=/mingw64/include \
+    --with-expat-lib="-L/mingw64/lib -lexpat" \
     --without-python \
     --without-perl \
     --without-threads \
-    --without-jasper \
-    --with-pg=/mingw32/bin/pg_config \
+    --with-jasper \
+    --with-pg=/mingw64/bin/pg_config \
     --without-libkml \
-    --with-png=/mingw32 \
-    --with-jpeg=/mingw32 \
-    --with-odbc=/c/Rtools/mingw_32/i686-w64-mingw32 \
-    --with-freexl=/mingw32 \
-    --with-static-proj4=yes
+    --with-png=/mingw64 \
+    --with-jpeg=/mingw64 \
+    --with-odbc=/c/Rtools/mingw_64/x86_64-w64-mingw32 \
+    --with-freexl=/mingw64 \
+    --with-static-proj4=yes \
+    --with-openjpeg=/mingw64 \
+    --with-kea=/usr/local/bin/kea-config \
+    --with-mysql=/mingw64/bin/mariadb_config \
+    --with-netcdf=/mingw64/bin/nc-config \
+    --with-hdf5=/usr/local \
+    --with-hdf4=/usr/local
 
   sed -i GDALmake.opt -e "s|EXE_DEP_LIBS.*|EXE_DEP_LIBS = \$\(GDAL_SLIB\)|g"
   sed -i GNUmakefile -e "s|\$(GDAL_ROOT)\/||g"

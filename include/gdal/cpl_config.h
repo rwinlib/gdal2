@@ -1,6 +1,6 @@
 /* port/cpl_config.h.  Generated from cpl_config.h.in by configure.  */
 /* port/cpl_config.h.in.  Generated from configure.in by autoheader.  */
-/* $Id: cpl_config.h.in 36873 2016-12-15 01:53:11Z rouault $ */
+/* $Id: cpl_config.h.in 38508 2017-05-20 09:35:37Z rouault $ */
 
 /* Define if you want to use pthreads based multiprocessing support */
 /* #undef CPL_MULTIPROC_PTHREAD */
@@ -18,7 +18,7 @@
 /* #undef HAVE_5ARGS_MREMAP */
 
 /* --prefix directory for GDAL install */
-#define GDAL_PREFIX "/mingw64"
+#define GDAL_PREFIX "/usr/local"
 
 /* Define to 1 if you have the <assert.h> header file. */
 #define HAVE_ASSERT_H 1
@@ -259,3 +259,6 @@
 
 /* Define to 1 if you have the `uselocale' function. */
 /* #undef HAVE_USELOCALE */
+
+/* Define to 1 if you have the `std::isnan' function. */
+#define HAVE_STD_IS_NAN 1

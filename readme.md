@@ -1,48 +1,79 @@
 # GDAL for R
 
-GDAL Windows stack, July 2017. See attached [`PKGBUILD`](PKGBUILD) for `mingw-w64-gdal`. Contains:
+## NEWS
 
- - GDAL 2.2.0
+ - RWINLIB GDAL v2.2.3: Added drivers for MYSQL, HDF4, KEALIB, OPENJPEG2000, JASPER
+
+## Stack Details
+
+GDAL Windows stack, lasted updated February 2018. Contains:
+
+ - GDAL 2.2.3
  - GEOS 3.6.1
  - PROJ 4.9.3
+
+Recently updated drivers (library only):
+
+ - NETCDF 4.5.0
+ - HDF5 1.8.20
+ - HDF4 4.2.13
+ - KEALIB 1.4.7
  - CURL 7.54.1 (--with-winssl)
+ - LIBMARIADBCLIENT 2.3.4
  - POSTGRESQL 9.6.3 (--with-openssl)
 
-We also had to rebuild C++ dependencies `mingw-w64-geos` and `mingw-w64-proj` using msys2 + rtools. Just source `rtools32.sh` or `rtools64.sh` before running `makepkg-mingw`.
+Due to changes in `mingw-w64` we rebuild most dependencies from source using msys2 + rtools. Just source `rtools32.sh` or `rtools64.sh` before running `makepkg-mingw`.
 
 
 ## How to use
 
-To link the stack use the following flags in your package `Makevars.win`
+To link the stack use the following flags in your package `Makevars.win`. 
 
 ```
+VERSION = 2.2.3
+COMPILED_BY ?= gcc-4.6.3
+RWINLIB = ../windows/gdal2-$(VERSION)
+TARGET = lib$(subst gcc,,$(COMPILED_BY))$(R_ARCH)
+
 PKG_CPPFLAGS =\
-  -I../windows/gdal2-2.2.0/include/gdal \
-  -I../windows/gdal2-2.2.0/include/geos \
-  -I../windows/gdal2-2.2.0/include/proj
+  -I$(RWINLIB)/include/gdal \
+  -I$(RWINLIB)/include/geos \
+  -I$(RWINLIB)/include/proj
 
 PKG_LIBS = \
-  -L../windows/gdal2-2.2.0/lib-4.9.3${R_ARCH} \
+  -L$(RWINLIB)/$(TARGET) \
   -lgdal -lsqlite3 -lspatialite -lproj -lgeos_c -lgeos  \
-  -ljson-c -lnetcdf -lpq -lintl -lwebp -lcurl -lssh2 -lssl -lcrypto \
-  -lhdf5_hl -lhdf5 -lexpat -lfreexl -lcfitsio \
-  -lpng16 -ljpeg -ltiff -lgeotiff -lgif -lxml2 -llzma -lszip -lz \
+  -ljson-c -lnetcdf -lmariadbclient -lpq -lintl -lwebp -lcurl -lssh2 -lssl -lcrypto \
+  -lkea -lhdf5_cpp -lhdf5_hl -lhdf5 -lexpat -lfreexl -lcfitsio \
+  -lmfhdf -ldf -lxdr \
+  -lopenjp2 -ljasper -lpng16 -ljpeg -ltiff -lgeotiff -lgif -lxml2 -llzma -lszip -lz \
   -lodbc32 -lodbccp32 -liconv -lpsapi -lws2_32 -lcrypt32 -lwldap32 -lsecur32 -lgdi32
 ```
 
+See the `sf` package [Makevars.win](https://github.com/r-spatial/sf/blob/master/src/Makevars.win) for a working example.
 
-## HTTPS backend
+## Build config
 
-To make curl to use openssl instead of winssl for HTTPS you need to rename `libcurl-openssl.a` to `libcurl.a` for both architectures. However this will require you to supply a CA bundle via envvars.
-
-## Full config
+Define the following macros to statically link against curl, xml2, openjpeg and jasper:
 
 ```
-GDAL is now configured for x86_64-w64-mingw32
+-DCURL_STATICLIB -DLIBXML_STATIC -DOPJ_STATIC -DJAS_DLL=0 
+```
 
-  Installation directory:    /mingw64
-  C compiler:                c:/Rtools/mingw_64/bin/gcc -DCURL_STATICLIB -DLIBXML_STATIC -DHAVE_AVX_AT_COMPILE_TIME -DHAVE_SSSE3_AT_COMPILE_TIME -DHAVE_SSE_AT_COMPILE_TIME -march=x86-64 -mtune=generic -O2 -pipe -fno-strict-aliasing
-  C++ compiler:              c:/Rtools/mingw_64/bin/g++ -std=gnu++11 -DCURL_STATICLIB -DLIBXML_STATIC -DHAVE_AVX_AT_COMPILE_TIME -DHAVE_SSSE3_AT_COMPILE_TIME -DHAVE_SSE_AT_COMPILE_TIME -march=x86-64 -mtune=generic -O2 -pipe
+The PKGBUILD has a fix for autoconf to detect HDF4:
+
+```
+sed -i 's/-lsz /-lszip -lxdr -lm/g' configure.ac
+```
+
+See attached [`PKGBUILD`](PKGBUILD) for `mingw-w64-gdal`. Example i686 configure output (same drivers as x64):
+
+```
+GDAL is now configured for i686-w64-mingw32
+
+  Installation directory:    /usr/local
+  C compiler:                c:/Rtools/mingw_32/bin/gcc -DCURL_STATICLIB -DLIBXML_STATIC -DOPJ_STATIC -DJAS_DLL=0 -DHAVE_AVX_AT_COMPILE_TIME -DHAVE_SSSE3_AT_COMPILE_TIME -DHAVE_SSE_AT_COMPILE_TIME -march=i686 -mtune=generic -O2 -pipe -fno-strict-aliasing
+  C++ compiler:              c:/Rtools/mingw_32/bin/g++ -std=gnu++11 -DCURL_STATICLIB -DLIBXML_STATIC -DOPJ_STATIC -DJAS_DLL=0 -DHAVE_AVX_AT_COMPILE_TIME -DHAVE_SSSE3_AT_COMPILE_TIME -DHAVE_SSE_AT_COMPILE_TIME -march=i686 -mtune=generic -O2 -pipe
   C++11 support:             yes
 
   LIBTOOL support:           yes
@@ -63,13 +94,13 @@ GDAL is now configured for x86_64-w64-mingw32
   12 bit JPEG-in-TIFF:       no
   LIBGIF support:            external
   OGDI support:              no
-  HDF4 support:              no
+  HDF4 support:              yes
   HDF5 support:              yes
-  Kea support:               no
+  Kea support:               yes
   NetCDF support:            yes
   Kakadu support:            no
-  JasPer support:            no
-  OpenJPEG support:          no
+  JasPer support:            yes (GeoJP2=no)
+  OpenJPEG support:          yes
   ECW support:               no
   MrSID support:             no
   MrSID/MG4 Lidar support:   no
@@ -81,7 +112,7 @@ GDAL is now configured for x86_64-w64-mingw32
   cURL support (wms/wcs/...):yes
   PostgreSQL support:        yes
   MRF support:               yes
-  MySQL support:             no
+  MySQL support:             yes
   Ingres support:            no
   Xerces-C support:          no
   NAS support:               no
@@ -124,5 +155,4 @@ GDAL is now configured for x86_64-w64-mingw32
   enable pthread support:    no
   enable POSIX iconv support:yes
   hide internal symbols:     no
-
 ```
