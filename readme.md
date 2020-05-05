@@ -1,10 +1,16 @@
-# GDAL for R
+# GDAL2 for R
 
-## NEWS
+## NEWS: moving to GDAL 3!
 
- - RWINLIB GDAL v2.2.3: Added drivers for MYSQL, HDF4, KEALIB, OPENJPEG2000, JASPER
+GDAL 3 builds are now available at: https://github.com/rwinlib/gdal3
+The GDAL2 repository will not longer be updated (but you can keep using it).
+
+---
+
 
 ## Stack Details
+
+__Changes__: RWINLIB GDAL v2.2.3: Added drivers for MYSQL, HDF4, KEALIB, OPENJPEG2000, JASPER
 
 GDAL Windows stack, lasted updated February 2018. Contains:
 
